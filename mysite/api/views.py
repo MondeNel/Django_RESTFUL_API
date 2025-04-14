@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from .models import BlogPost
 from .serializers import BlogPostSerializer
+from rest_framework.response import Response
+from rest_framework import status
 
 # API view for listing and creating blog posts
 class BlogPostListCreate(generics.ListCreateAPIView):
@@ -13,6 +15,16 @@ class BlogPostListCreate(generics.ListCreateAPIView):
     """
     queryset = BlogPost.objects.all()
     serializer_class = BlogPostSerializer
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Custom DELETE method to delete a blog post and return a custom response.
+        """
+        BlogPost.objects.all().delete()
+        return Response(
+            {"message": "All blog posts have been deleted."},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 # API view for retrieving, updating, or deleting a blog post by its primary key
 class BlogPostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
